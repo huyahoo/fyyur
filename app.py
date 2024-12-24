@@ -153,30 +153,32 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    form = VenueForm(request.form)
-    try:
-        # Create a new Venue instance
-        new_venue = Venue(
-            name=form.name.data,
-            city=form.city.data,
-            state=form.state.data,
-            address=form.address.data,
-            phone=form.phone.data,
-            genres=form.genres.data,
-            facebook_link=form.facebook_link.data,
-            website=form.website_link.data,
-            seeking_talent=form.seeking_talent.data,
-            seeking_description=form.seeking_description.data,
-            image_link=form.image_link.data
-        )
-        db.session.add(new_venue)
-        db.session.commit()
-        flash(f'Venue "{new_venue.name}" was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'An error occurred. Venue "{form.name.data}" could not be listed.')
-    finally:
-        db.session.close()
+    form = VenueForm(request.form, meta={'csrf': False})
+    if form.validate():
+        try:
+            new_venue = Venue(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                address=form.address.data,
+                phone=form.phone.data,
+                genres=form.genres.data,
+                facebook_link=form.facebook_link.data,
+                website=form.website_link.data,
+                seeking_talent=form.seeking_talent.data,
+                seeking_description=form.seeking_description.data,
+                image_link=form.image_link.data
+            )
+            db.session.add(new_venue)
+            db.session.commit()
+            flash(f'Venue "{new_venue.name}" was successfully listed!')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred. Venue "{form.name.data}" could not be listed.')
+        finally:
+            db.session.close()
+    else:
+        flash('An error occurred. Please check the form for errors.')
     return redirect(url_for('index'))
 
 @app.route('/venues/<int:venue_id>', methods=['DELETE'])
@@ -320,28 +322,31 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-    form = ArtistForm(request.form)
-    try:
-        new_artist = Artist(
-            name=form.name.data,
-            city=form.city.data,
-            state=form.state.data,
-            phone=form.phone.data,
-            genres=form.genres.data,
-            facebook_link=form.facebook_link.data,
-            website=form.website_link.data,
-            seeking_venue=form.seeking_venue.data,
-            seeking_description=form.seeking_description.data,
-            image_link=form.image_link.data
-        )
-        db.session.add(new_artist)
-        db.session.commit()
-        flash(f'Artist "{new_artist.name}" was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'An error occurred. Artist "{form.name.data}" could not be listed.')
-    finally:
-        db.session.close()
+    form = ArtistForm(request.form, meta={'csrf': False})
+    if form.validate():
+        try:
+            new_artist = Artist(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                phone=form.phone.data,
+                genres=form.genres.data,
+                facebook_link=form.facebook_link.data,
+                website=form.website_link.data,
+                seeking_venue=form.seeking_venue.data,
+                seeking_description=form.seeking_description.data,
+                image_link=form.image_link.data
+            )
+            db.session.add(new_artist)
+            db.session.commit()
+            flash(f'Artist "{new_artist.name}" was successfully listed!')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred. Artist "{form.name.data}" could not be listed.')
+        finally:
+            db.session.close()
+    else:
+        flash('An error occurred. Please check the form for errors.')
     return redirect(url_for('index'))
 
 
@@ -370,23 +375,25 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    form = ShowForm(request.form)
-    try:
-        new_show = Show(
-            artist_id=form.artist_id.data,
-            venue_id=form.venue_id.data,
-            start_time=form.start_time.data
-        )
-        db.session.add(new_show)
-        db.session.commit()
-        flash('Show was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash('An error occurred. Show could not be listed.')
-    finally:
-        db.session.close()
+    form = ShowForm(request.form, meta={'csrf': False})
+    if form.validate():
+        try:
+            new_show = Show(
+                artist_id=form.artist_id.data,
+                venue_id=form.venue_id.data,
+                start_time=form.start_time.data
+            )
+            db.session.add(new_show)
+            db.session.commit()
+            flash('Show was successfully listed!')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Show could not be listed.')
+        finally:
+            db.session.close()
+    else:
+        flash('An error occurred. Please check the form for errors.')
     return redirect(url_for('index'))
-
 
 @app.errorhandler(404)
 def not_found_error(error):

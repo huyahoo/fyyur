@@ -4,3 +4,4 @@ package-lock.json
 package.json
 env/
 migrations/
+.DS_Store
